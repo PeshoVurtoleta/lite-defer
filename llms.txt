@@ -1,0 +1,83 @@
+# @zakkster/lite-defer
+
+> Deferred reactive values for @zakkster/lite-signal: defer() returns a value
+> that lags its source and catches up on a scheduler, coalescing a synchronous
+> burst into one downstream update -- a concurrency frontier with a pending()
+> staleness signal.
+
+A frontier in the reactive graph. Urgent consumers read the source and see every
+change immediately; expensive consumers read the deferred value and update on the
+scheduler's cadence (a frame, an idle slot, a microtask) instead of on every set.
+This is useDeferredValue / Solid's createDeferred for lite-signal.
+
+Peer dependency: @zakkster/lite-signal ^1.5.0 (uses createRoot). ESM only.
+DOM-free core. MIT.
+
+## Model
+
+Model A (useDeferredValue): the source is computed EAGERLY; what the frontier
+defers is the WORK DOWNSTREAM of the deferred value. To defer an expensive
+DERIVATION, defer its cheap input and derive from the deferred value:
+
+    const q = defer(rawQuery);                     // cheap signal, deferred
+    const results = computed(() => search(q()));   // search runs on q's cadence
+
+## Schedulers -- (flush: () => void) => void
+
+- microtask   coalesce to end of current task. DEFAULT. No host APIs.
+- raf         coalesce to next animation frame (frame cadence). Falls back ~16ms.
+- idle        coalesce to an idle slot (lowest priority). Falls back ~1ms.
+- timeout(ms) factory: coalesce to setTimeout(ms) (a debounce cadence).
+- any (flush) => void works, including lite-raf's frame scheduler.
+
+Coalescing is built in: defer schedules at most one flush per burst.
+
+## Entry points
+
+- createDeferrer(reg) -> { defer, deferEffect }   // bind to any registry >=1.5.0
+- defer(source, opts?)                            // default registry
+- deferEffect(fn, opts?)                          // default registry
+
+## defer(source, { schedule?, equals? }) -> Deferred
+
+- source: an accessor () => T (a signal satisfies it).
+- Seeds SYNCHRONOUSLY to the source's current value. Lags on subsequent change;
+  catches up to the LATEST value when the scheduler fires (burst coalesced).
+- equals: gates the catch-up (default Object.is). schedule: default microtask.
+- Returns a callable accessor:
+  - d()          the current deferred (lagging) value.
+  - d.pending()  () => boolean. TRUE the instant the source moves ahead (synchronous),
+                 FALSE again when the deferred value catches up. The frontier
+                 indicator: dim stale content / show a spinner.
+  - d.dispose()  stop tracking; dispose the deferred + staleness signals.
+
+## deferEffect(fn, { schedule? }) -> dispose
+
+- An effect whose runs are coalesced onto a scheduler (at most one run per burst,
+  e.g. once per frame). The INITIAL run is also scheduled (engine semantics).
+- Thin wrapper over the engine's effect(fn, { scheduler }); provided so the named
+  schedulers have a home and the pattern reads clearly.
+
+## Ownership
+
+defer's internals are detached (createRoot), so an enclosing scope re-running
+never tears the deferred value down. The caller owns teardown via d.dispose().
+Call defer once at setup.
+
+## Zero-GC
+
+The deferred signal, the staleness signal, the tracking effect, and the flush
+thunk are fixed per defer. A churn of source-set + catch-up allocates nothing on
+the engine pool (20k cycles flat): the tracking effect re-tracks on a stable read
+order (cursor reuse), both signal sets are allocation-free.
+Honest non-claim: the scheduler's own queue entry (a microtask, a rAF callback,
+a timer) is the host's, not the engine pool's.
+
+## Gotchas
+
+- Model A: defer does NOT defer the source's own computation. Reading the source
+  inside the tracking effect forces it synchronously; to defer an expensive
+  computation, defer its cheap input upstream.
+- deferEffect's first run is scheduled, not synchronous.
+- pending() flips to true synchronously on a source change even though the value
+  catch-up is deferred -- that is the point (instant staleness, lazy value).

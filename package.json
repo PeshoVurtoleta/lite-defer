@@ -1,0 +1,62 @@
+{
+  "name": "@zakkster/lite-defer",
+  "version": "1.0.0",
+  "description": "Deferred reactive values for @zakkster/lite-signal: defer() returns a value that lags its source and catches up on a scheduler, coalescing a synchronous burst into one downstream update -- a concurrency frontier with a pending() staleness signal. microtask / raf / idle / timeout schedulers.",
+  "type": "module",
+  "main": "./Defer.js",
+  "module": "./Defer.js",
+  "types": "./Defer.d.ts",
+  "exports": {
+    ".": {
+      "types": "./Defer.d.ts",
+      "node": "./Defer.js",
+      "import": "./Defer.js",
+      "default": "./Defer.js"
+    }
+  },
+  "sideEffects": false,
+  "files": [
+    "Defer.js",
+    "Defer.d.ts",
+    "README.md",
+    "CHANGELOG.md",
+    "llms.txt",
+    "LICENSE.txt"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "peerDependencies": {
+    "@zakkster/lite-signal": ">=1.5.0-alpha"
+  },
+  "keywords": [
+    "reactive",
+    "signals",
+    "deferred",
+    "defer",
+    "transition",
+    "use-deferred-value",
+    "scheduler",
+    "coalesce",
+    "zero-gc",
+    "esm",
+    "lite-signal"
+  ],
+  "author": "Zahary Shinikchiev <shinikchiev@yahoo.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PeshoVurtoleta/lite-defer.git"
+  },
+  "homepage": "https://github.com/PeshoVurtoleta/lite-defer#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/PeshoVurtoleta"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
