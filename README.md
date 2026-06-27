@@ -1,5 +1,16 @@
 # @zakkster/lite-defer
 
+[![npm version](https://img.shields.io/npm/v/@zakkster/lite-defer.svg?style=for-the-badge&color=latest)](https://www.npmjs.com/package/@zakkster/lite-defer)
+![Zero-GC](https://img.shields.io/badge/Zero--GC-Hot%20path-00C853?style=for-the-badge&logo=leaf&logoColor=white)
+[![sponsor](https://img.shields.io/badge/sponsor-PeshoVurtoleta-ea4aaa.svg?logo=github)](https://github.com/sponsors/PeshoVurtoleta)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/@zakkster/lite-defer?style=for-the-badge)](https://bundlephobia.com/result?p=@zakkster/lite-defer)
+[![npm downloads](https://img.shields.io/npm/dm/@zakkster/lite-defer?style=for-the-badge&color=blue)](https://www.npmjs.com/package/@zakkster/lite-defer)
+[![npm total downloads](https://img.shields.io/npm/dt/@zakkster/lite-defer?style=for-the-badge&color=blue)](https://www.npmjs.com/package/@zakkster/lite-defer)
+[![lite-signal peer](https://img.shields.io/badge/peer-lite--signal-blue?style=for-the-badge)](https://github.com/PeshoVurtoleta/lite-signal)
+![TypeScript](https://img.shields.io/badge/TypeScript-Types-informational)
+![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
 **Deferred reactive values for [`@zakkster/lite-signal`](https://www.npmjs.com/package/@zakkster/lite-signal).**
 
 `defer(source)` returns a value that **lags** its source and catches up on a
